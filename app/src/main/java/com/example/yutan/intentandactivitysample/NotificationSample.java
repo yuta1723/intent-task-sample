@@ -3,10 +3,14 @@ package com.example.yutan.intentandactivitysample;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -20,6 +24,13 @@ public class NotificationSample extends Service {
     public NotificationSample() {
         super();
     }
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+        }
+    }
+
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     @Override
     public void onCreate() {
@@ -61,7 +72,7 @@ public class NotificationSample extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind");
-        return null;
+        return mMessenger.getBinder();
     }
 
     @Override
