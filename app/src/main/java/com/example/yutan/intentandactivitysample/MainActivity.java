@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        startService(new Intent(this,NotificationSample.class));
         bindService(new Intent(this, NotificationSample.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
