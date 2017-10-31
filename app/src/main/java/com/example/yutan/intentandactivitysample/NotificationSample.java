@@ -1,17 +1,14 @@
 package com.example.yutan.intentandactivitysample;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -21,22 +18,39 @@ import java.io.PrintWriter;
  */
 
 public class NotificationSample extends Service {
+
     private String TAG = NotificationSample.class.getSimpleName();
+
+    private String ACTION_1 = "action1";
+    private String ACTION_2 = "action2";
+
     public NotificationSample() {
         super();
     }
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-        }
-    }
 
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private BroadcastReceiver receiver;
 
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");
         super.onCreate();
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "onReceive");
+                if (intent.getAction().equals(ACTION_1)) {
+                    Intent i = new Intent();
+                    i.setAction(ACTION_2);
+
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcastSync(i);
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("action1");
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
+
     }
 
     @Override
@@ -49,6 +63,7 @@ public class NotificationSample extends Service {
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(receiver);
     }
 
     @Override
@@ -69,11 +84,10 @@ public class NotificationSample extends Service {
         super.onTrimMemory(level);
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind");
-        return mMessenger.getBinder();
+        return null;
     }
 
     @Override
@@ -91,12 +105,6 @@ public class NotificationSample extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.d(TAG, "onTaskRemoved");
-        unbindService();
-//        try {
-//            mMessenger.send(Message.obtain(null, 2, "onTaskRemoved"));
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
         super.onTaskRemoved(rootIntent);
     }
 
