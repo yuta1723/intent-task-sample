@@ -39,10 +39,7 @@ public class NotificationSample extends Service {
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "onReceive");
                 if (intent.getAction().equals(ACTION_1)) {
-                    Intent i = new Intent();
-                    i.setAction(ACTION_2);
 
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcastSync(i);
                 }
             }
         };
@@ -105,6 +102,10 @@ public class NotificationSample extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.d(TAG, "onTaskRemoved");
+        Intent i = new Intent();
+        i.setAction(ACTION_2);
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcastSync(i);
         super.onTaskRemoved(rootIntent);
     }
 

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "receive : " + intent.getAction());
+            Toast.makeText(getApplicationContext(),"hoge",Toast.LENGTH_LONG);
         }
     };
 
