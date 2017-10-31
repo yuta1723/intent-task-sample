@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -90,6 +91,12 @@ public class NotificationSample extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.d(TAG, "onTaskRemoved");
+        unbindService();
+//        try {
+//            mMessenger.send(Message.obtain(null, 2, "onTaskRemoved"));
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
         super.onTaskRemoved(rootIntent);
     }
 

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
@@ -11,15 +12,35 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
+
+    static class ReplyHandler extends Handler {
+        private String TAG = ReplyHandler.class.getSimpleName();
+        private Context _cont;
+
+        public ReplyHandler(Context cont) {
+            _cont = cont;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what) {
+                case 2:
+                    Log.d(TAG,"hoge");
+                    Toast.makeText(_cont, (String)msg.obj, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        startService(new Intent(this,NotificationSample.class));
+        startService(new Intent(this,NotificationSample.class));
         bindService(new Intent(this, NotificationSample.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -34,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             // service using a Messenger, so here we get a client-side
             // representation of that from the raw IBinder object.
             mService = new Messenger(service);
+            mService = new Messenger(new ReplyHandler(getApplicationContext()));
 //            try {
 //                mService.send(Message.obtain(null, NotificationService.MSG_CHANGE_PLAY, 0, 0));
 //
